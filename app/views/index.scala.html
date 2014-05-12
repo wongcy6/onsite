@@ -1,7 +1,23 @@
-@(message: String)
+@(status: String, succeed: Boolean)
 
-@main("Welcome to Play") {
+<!DOCTYPE html>
 
-    @play20.welcome(message)
-
-}
+<html>
+    <head>
+        <title>入场验证</title>
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+        <script src="@routes.Assets.at("javascripts/jquery-1.9.0.min.js")" type="text/javascript"></script>
+    </head>
+    <body>
+        <form action="/" method="post">
+            <input type="text" name="code"/>
+            <button type="submit">验证</button>
+        </form>
+        @if(succeed) {
+           <label style="color:green">@status</label>
+        } else {
+           <label style="color:red">@status</label>
+        }
+    </body>
+</html>
