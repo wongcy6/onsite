@@ -19,11 +19,11 @@ object Application extends Controller {
   def addData = Action {
 
     val dataSqls = Array(
-    "INSERT INTO CheckDB (Code,Name,CheckInTime) values (10000, 'Richard Wong', NULL)",
-    "INSERT INTO CheckDB (Code,Name,CheckInTime) values (20000, 'Derek Shen', NULL)",
-    "INSERT INTO CheckDB (Code,Name,CheckInTime) values (30000, 'Jeff Weiner', NULL)",
-    "INSERT INTO CheckDB (Code,Name,CheckInTime) values (40000, 'Kevin Scott', NULL)",
-    "INSERT INTO CheckDB (Code,Name,CheckInTime) values (50000, 'Robin Zhang', NULL)"
+    "INSERT INTO CheckDB (Code,Name,CheckInTime) values (10000, 'Joe Doe', NULL)",
+    "INSERT INTO CheckDB (Code,Name,CheckInTime) values (20000, 'Jane Smith', NULL)",
+    "INSERT INTO CheckDB (Code,Name,CheckInTime) values (30000, 'Bill Gates', NULL)",
+    "INSERT INTO CheckDB (Code,Name,CheckInTime) values (40000, 'Steven Jobs', NULL)",
+    "INSERT INTO CheckDB (Code,Name,CheckInTime) values (50000, 'David Chen', NULL)"
       )
 
     DB.withConnection { implicit c =>
