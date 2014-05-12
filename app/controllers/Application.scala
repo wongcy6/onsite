@@ -39,8 +39,9 @@ object Application extends Controller {
 
     DB.withConnection { implicit c =>
 
-      val result:List[Int~String~Option[java.util.Date]] = {
-        SQL("select * from CheckDB").as(get[Int]("Code")~get[String]("Name")~get[Option[java.util.Date]]("CheckInTime")*)
+      val result:List[(Int,String,Option[java.util.Date])] = {
+        SQL("select * from CheckDB")
+          .as(get[Int]("Code") ~ get[String]("Name") ~ get[Option[java.util.Date]]("CheckInTime") map(flatten) *)
       }
 
       Ok(result.toString)
@@ -53,6 +54,8 @@ object Application extends Controller {
     }
     Ok("Done")
   }
+
+  // -------------------------------------
 
   def index = Action {
     Ok(views.html.index("请输入验证码", true))
@@ -67,15 +70,27 @@ object Application extends Controller {
         "time" -> new java.sql.Timestamp(System.currentTimeMillis()),
         "code" -> code).executeUpdate()
 
-      if (result == 0) {
-        val count: Long = SQL("SELECT COUNT(*) from CheckDB where Code={code}").on("code"->code).as(scalar[Long].single)
-        if (count == 0) {
-          Ok(views.html.index("验证失败. 验证码 " + code.toString + "不存在", false))
-        } else {
-          Ok(views.html.index("验证失败。验证码 " + code.toString + "已使用", false))
+      val record:List[(Int,String,Option[java.util.Date])] = {
+        try {
+          SQL("SELECT * from CheckDB WHERE code={code}")
+            .on("code" -> code)
+            .as(get[Int]("Code") ~ get[String]("Name") ~ get[Option[java.util.Date]]("CheckInTime") map (flatten) *)
+        } catch {
+          case e: Exception => List[(Int,String,Option[java.util.Date])] {(-1,"None",None)}
         }
+      }
+
+      if (result == 0) {
+        if (record.length == 0) {
+          Ok(views.html.index("验证失败. 验证码 " + code.toString + "不存在", false))
+        } else if (record.head._1 != -1) {
+          Ok(views.html.index("验证失败。验证码 " + code.toString + "已使用。 名字： " + record.head._2.toString + " 时间： " + record.head._3.getOrElse(-1), false))
+        } else {
+          Ok(views.html.index("验证失败. 请重新输入", false))
+        }
+
       } else {
-        Ok(views.html.index("验证成功", true))
+        Ok(views.html.index("验证码 " + code.toString + "验证成功。名字： " + record.head._2.toString, true))
       }
     }
   }
